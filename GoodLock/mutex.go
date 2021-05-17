@@ -3,8 +3,8 @@ package goodlock
 import "fmt"
 
 type GoodMutex struct {
-	l  chan int
-	id int
+	l      chan int
+	lockID int
 }
 
 var id int = 1
@@ -27,5 +27,5 @@ func (gm GoodMutex) Unlock() {
 }
 
 func (gm GoodMutex) PrintID() {
-	fmt.Printf("Hello %d!\n", gm.id)
+	fmt.Printf("Hello %d!\n", gm.lockID)
 }

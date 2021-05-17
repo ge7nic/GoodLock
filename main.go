@@ -1,20 +1,15 @@
 package main
 
 import (
-	mutex "goodlock/GoodLock"
 	tree "goodlock/LockTree"
 )
 
-func test() {
-	tree.Test()
+func example(threadID int) {
+	lt := tree.New(threadID)
+	lt.Lock(1)
+	lt.Lock(1)
 }
 
 func main() {
-	mutexOne := mutex.NewMutex()
-	mutexTwo := mutex.NewMutex()
-
-	mutexOne.PrintID()
-	mutexTwo.PrintID()
-
-	test()
+	example(1)
 }
