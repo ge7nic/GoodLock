@@ -1,8 +1,13 @@
 package main
 
 import (
-	mutex "goodlock/GoodMutex"
+	mutex "goodlock/GoodLock"
+	tree "goodlock/LockTree"
 )
+
+func test() {
+	tree.Test()
+}
 
 func main() {
 	mutexOne := mutex.NewMutex()
@@ -10,4 +15,6 @@ func main() {
 
 	mutexOne.PrintID()
 	mutexTwo.PrintID()
+
+	test()
 }
