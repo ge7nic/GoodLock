@@ -58,8 +58,14 @@ func (t LockTree) Lock(lockID int) {
 }
 
 func (t LockTree) Unlock(lockID int) {
-	// Check here if this lock is still used in any other way
-	t.currentNode = t.currentNode.parent
+	counter := t.lockSet[lockID]
+	if counter == 0 {
+		t.currentNode = t.currentNode.parent
+		delete(t.lockSet, lockID)
+		fmt.Printf("Unlocked Lock with ID %d\n", lockID)
+	} else {
+		t.lockSet[lockID]--
+	}
 }
 
 func (t LockTree) Test() {

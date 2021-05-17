@@ -7,7 +7,7 @@ import (
 func example(threadID int) {
 	lt := tree.New(threadID)
 	lt.Lock(1)
-	lt.Lock(1)
+	lt.Unlock(1)
 }
 
 func main() {
