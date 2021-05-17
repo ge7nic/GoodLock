@@ -76,16 +76,11 @@ func (t *LockTree) Unlock(lockID int) {
 	}
 }
 
-func makeN() []*LockNode {
-	n := make([]*LockNode, 0)
-	// Implement this
-	return n
+func makeN(n *LockNode, m *LockNode) {
+	// Implement this recursivly. Add Splice to Parameters. TODO
 }
 
-func (t *LockTree) check(n *LockNode, m *LockNode) {
-	// implement this
-}
-
+// Helper Method for the needed Set N. Swaps the value of marked of every element from true to false and vice versa.
 func swapMark(set []*LockNode) {
 	for _, e := range set {
 		if e.marked {
@@ -96,8 +91,12 @@ func swapMark(set []*LockNode) {
 	}
 }
 
+func (t *LockTree) check(n *LockNode, m *LockNode) {
+	// implement this
+}
+
 func (t *LockTree) analyseThis(node *LockNode, secondTree *LockTree) {
-	n := makeN() // Set which contains all Nodes n in LockTree t, for which is n.lock == secondTree.n.lock && n is not below a mark
+	makeN(node, secondTree.root) // Set which contains all Nodes n in LockTree t, for which is n.lock == secondTree.n.lock && n is not below a mark
 	for _, e := range n {
 		t.check(node, e)
 	}
