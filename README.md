@@ -1,0 +1,1 @@
+# Implementierung des GoodLock Algorithmus in Golang
