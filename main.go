@@ -1,7 +1,12 @@
 package main
 
-import "fmt"
+import (
+	mutex "goodlock/GoodMutex"
+)
 
 func main() {
-	fmt.Printf("Hello World!")
+	mutexOne := mutex.NewMutex(1)
+	mutexOne.Lock()
+	mutexTwo := mutex.NewMutex(2)
+	mutexTwo.Lock()
 }
