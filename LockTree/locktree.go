@@ -95,6 +95,7 @@ func (t *LockTree) check(n *LockNode, m *LockNode) {
 	// implement this
 }
 
+// TODO: FIX METHOD
 func (t *LockTree) analyseThis(node *LockNode, secondTree *LockTree) {
 	makeN(node, secondTree.root) // Set which contains all Nodes n in LockTree t, for which is n.lock == secondTree.n.lock && n is not below a mark
 	for _, e := range n {
