@@ -5,8 +5,9 @@ import (
 )
 
 func main() {
-	mutexOne := mutex.NewMutex(1)
-	mutexOne.Lock()
-	mutexTwo := mutex.NewMutex(2)
-	mutexTwo.Lock()
+	mutexOne := mutex.NewMutex()
+	mutexTwo := mutex.NewMutex()
+
+	mutexOne.PrintID()
+	mutexTwo.PrintID()
 }
