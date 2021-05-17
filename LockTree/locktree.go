@@ -58,6 +58,7 @@ func (t LockTree) Lock(lockID int) {
 }
 
 func (t LockTree) Unlock(lockID int) {
+	// Get the counter from this lockID - If it is 0, it is only used once and can be deleted. If not, reduce the counter by one.
 	counter := t.lockSet[lockID]
 	if counter == 0 {
 		t.currentNode = t.currentNode.parent
