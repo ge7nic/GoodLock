@@ -76,9 +76,43 @@ func (t *LockTree) Unlock(lockID int) {
 	}
 }
 
-func (t *LockTree) Analyse() {
+func makeN() []*LockNode {
+	n := make([]*LockNode, 0)
+	// Implement this
+	return n
+}
+
+func (t *LockTree) check(n *LockNode, m *LockNode) {
+	// implement this
+}
+
+func swapMark(set []*LockNode) {
+	for _, e := range set {
+		if e.marked {
+			e.marked = false
+		} else {
+			e.marked = true
+		}
+	}
+}
+
+func (t *LockTree) analyseThis(node *LockNode, secondTree *LockTree) {
+	n := makeN() // Set which contains all Nodes n in LockTree t, for which is n.lock == secondTree.n.lock && n is not below a mark
+	for _, e := range n {
+		t.check(node, e)
+	}
+	// Mark all Nodes in N
+	swapMark(n)
+	for _, child := range node.children {
+		t.analyseThis(child, secondTree)
+	}
+	// Unmark all Nodes in N
+	swapMark(n)
+}
+
+func (t *LockTree) Analyse(secondTree *LockTree) {
 	fmt.Println("----------Analyse------------")
 	for _, e := range t.root.children {
-		fmt.Printf("%d\n", e.key)
+		t.analyseThis(e, secondTree)
 	}
 }
