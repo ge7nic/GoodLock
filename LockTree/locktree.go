@@ -18,6 +18,7 @@ type LockTree struct {
 	root        *LockNode
 }
 
+// Create a new LockTree.
 func New(id int) LockTree {
 	var lockSet = make(map[int]int)
 	var children = make([]*LockNode, 0)
@@ -25,6 +26,7 @@ func New(id int) LockTree {
 	return LockTree{lockSet, id, &root, &root}
 }
 
+// Method to check if the splice children has a child with this lockID. Helper function.
 func (n LockNode) hasChild(lockID int) (int, bool) {
 	for i, e := range n.children {
 		if e.key == lockID {
@@ -67,8 +69,4 @@ func (t LockTree) Unlock(lockID int) {
 	} else {
 		t.lockSet[lockID]--
 	}
-}
-
-func (t LockTree) Test() {
-	fmt.Printf("%d\n", t.root.key)
 }
