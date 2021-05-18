@@ -1,8 +1,6 @@
-package locktree
+package tree
 
-import (
-	"fmt"
-)
+import "fmt"
 
 type LockNode struct {
 	key      int
@@ -13,21 +11,22 @@ type LockNode struct {
 
 type LockTree struct {
 	lockSet     map[int]int
-	id          int // Propably unneccesary, due to the fact that root.key should be the same thing. Possibly REMOVE.
 	currentNode *LockNode
 	root        *LockNode
 }
 
-var treeList []LockTree // propably also not neccesary, REMOVE LATER
+func (t *LockTree) PrintLockSet() {
+	for k, e := range t.lockSet {
+		fmt.Println("Key: ", k, "=>", "Element:", e)
+	}
+}
 
 // Create a new LockTree.
 func New(id int) *LockTree {
 	var lockSet = make(map[int]int)
 	var children = make([]*LockNode, 0)
 	root := LockNode{id, false, nil, children}
-
-	lt := LockTree{lockSet, id, &root, &root}
-	treeList = append(treeList, lt)
+	lt := LockTree{lockSet, &root, &root}
 	return &lt
 }
 
@@ -70,7 +69,6 @@ func (t *LockTree) Unlock(lockID int) {
 	if counter == 0 {
 		t.currentNode = t.currentNode.parent
 		delete(t.lockSet, lockID)
-		fmt.Printf("Unlocked Lock with ID %d\n", lockID)
 	} else {
 		t.lockSet[lockID]--
 	}
@@ -101,14 +99,29 @@ func swapMark(set []*LockNode) {
 	}
 }
 
+// Checks if node n is above node m.
+func (n *LockNode) isAbove(m *LockNode) bool {
+	// iterate through all the children of n - If m is one of them, n is above m.
+	for _, e := range n.children {
+		if e.key == m.key {
+			return true
+		}
+	}
+	return false
+}
+
+// Outputs an Error message to the user - A Deadlock has been detected.
+func (t *LockTree) conflict(n *LockNode, m *LockNode) {
+	fmt.Printf("Conflict Detected between Lock %d and Lock %d detected!\n", n.key, m.key)
+}
+
 func (t *LockTree) check(n *LockNode, m *LockNode) {
 	for _, e := range n.children {
-		fmt.Printf("%d\n", e.key) // Just to shut up the Compiler, remove later
-		/*if m.isAbove(e) { // IMPLEMENT isAbove Method
-			t.conflict(e, m) // IMPLEMENT conflict
+		if m.isAbove(e) {
+			t.conflict(e, m)
 		} else {
 			t.check(e, m) // iterate through
-		}*/
+		}
 	}
 }
 

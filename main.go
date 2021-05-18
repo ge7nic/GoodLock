@@ -2,56 +2,50 @@ package main
 
 import (
 	"fmt"
+	mutex "goodlock/GoodMutex"
 	tree "goodlock/LockTree"
 )
 
-type test struct {
-	key  int
-	mark bool
-}
-
-func example(threadID int, trees chan *tree.LockTree) {
-	lt := tree.New(threadID)
-	lt.Lock(threadID)
-	lt.Unlock(threadID)
-	trees <- lt
-}
-
-func something(x int, set *[]*test, flag bool) {
-	if x != 0 {
-		*set = append(*set, &test{x, flag})
-		x = x - 1
-		if flag {
-			flag = false
-		} else {
-			flag = true
+func exampleThread(id int, locks []*mutex.GoodMutex, stopchan chan string, treechan chan *tree.LockTree) {
+	lockTree := tree.New(id)
+	go func() {
+		for {
+			// Content here!
+			locks[0].Lock(lockTree)
+			locks[2].Lock(lockTree)
+			locks[1].Lock(lockTree)
+			locks[1].Unlock(lockTree)
+			locks[3].Lock(lockTree)
+			locks[3].Unlock(lockTree)
+			locks[0].Unlock(lockTree)
+			locks[3].Lock(lockTree)
+			locks[1].Lock(lockTree)
+			locks[2].Lock(lockTree)
+			locks[2].Unlock(lockTree)
+			locks[1].Unlock(lockTree)
+			locks[3].Unlock(lockTree)
 		}
-		something(x, set, flag)
-	}
-}
-
-func swap(set []*test) {
-	for _, e := range set {
-		if e.mark {
-			e.mark = false
-		} else {
-			e.mark = true
-		}
-	}
+	}()
+	<-stopchan
+	treechan <- lockTree
 }
 
 func main() {
-	/*treeChan := make(chan *tree.LockTree)
-	go example(1, treeChan)
-	go example(2, treeChan)*/
+	var stop string
+	availableLocks := []*mutex.GoodMutex{mutex.NewMutex(), mutex.NewMutex(), mutex.NewMutex(), mutex.NewMutex()}
+	var trees []*tree.LockTree
+	stopchan := make(chan string)
+	treechan := make(chan *tree.LockTree)
+	go exampleThread(1, availableLocks, stopchan, treechan)
 
-	//-----------------------//
-	var z = make([]*test, 0)
-
-	something(5, &z, true)
-
-	for _, e := range z {
-		fmt.Printf("%t\n", e.mark)
+	fmt.Scanf("%s", &stop)
+	go func() {
+		for {
+			stopchan <- stop
+		}
+	}()
+	trees = append(trees, <-treechan)
+	for _, e := range trees {
+		e.PrintLockSet()
 	}
-	swap(z)
 }
