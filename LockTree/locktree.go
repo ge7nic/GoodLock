@@ -76,8 +76,17 @@ func (t *LockTree) Unlock(lockID int) {
 	}
 }
 
-func makeN(n *LockNode, m *LockNode) {
-	// Implement this recursivly. Add Splice to Parameters. TODO
+func makeN(n *LockNode, m *LockNode, set *[]*LockNode) {
+	for _, e := range m.children {
+		// if it has the same lock as in n, add it to the set
+		if e.key == n.key {
+			*set = append(*set, e)
+		}
+		if !e.marked {
+			// iterate recursivly through all children e
+			makeN(n, e, set)
+		}
+	}
 }
 
 // Helper Method for the needed Set N. Swaps the value of marked of every element from true to false and vice versa.
@@ -97,7 +106,8 @@ func (t *LockTree) check(n *LockNode, m *LockNode) {
 
 // TODO: FIX METHOD
 func (t *LockTree) analyseThis(node *LockNode, secondTree *LockTree) {
-	makeN(node, secondTree.root) // Set which contains all Nodes n in LockTree t, for which is n.lock == secondTree.n.lock && n is not below a mark
+	var n = make([]*LockNode, 0)
+	makeN(node, secondTree.root, &n) // Set which contains all Nodes n in LockTree t, for which is n.lock == secondTree.n.lock && n is not below a mark
 	for _, e := range n {
 		t.check(node, e)
 	}

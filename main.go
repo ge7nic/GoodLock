@@ -5,6 +5,11 @@ import (
 	tree "goodlock/LockTree"
 )
 
+type test struct {
+	key  int
+	mark bool
+}
+
 func example(threadID int, trees chan *tree.LockTree) {
 	lt := tree.New(threadID)
 	lt.Lock(threadID)
@@ -12,27 +17,41 @@ func example(threadID int, trees chan *tree.LockTree) {
 	trees <- lt
 }
 
-func something(i int, x int, set *[]int) {
-	*set = append(*set, i)
-	i++
+func something(x int, set *[]*test, flag bool) {
 	if x != 0 {
-		*set = append(*set, x)
-		x--
-		something(i, x, set)
+		*set = append(*set, &test{x, flag})
+		x = x - 1
+		if flag {
+			flag = false
+		} else {
+			flag = true
+		}
+		something(x, set, flag)
+	}
+}
+
+func swap(set []*test) {
+	for _, e := range set {
+		if e.mark {
+			e.mark = false
+		} else {
+			e.mark = true
+		}
 	}
 }
 
 func main() {
-	treeChan := make(chan *tree.LockTree)
+	/*treeChan := make(chan *tree.LockTree)
 	go example(1, treeChan)
-	go example(2, treeChan)
+	go example(2, treeChan)*/
 
 	//-----------------------//
-	var z = make([]int, 0)
+	var z = make([]*test, 0)
 
-	something(0, 5, &z)
+	something(5, &z, true)
 
 	for _, e := range z {
-		fmt.Printf("%d\n", e)
+		fmt.Printf("%t\n", e.mark)
 	}
+	swap(z)
 }
