@@ -76,6 +76,7 @@ func (t *LockTree) Unlock(lockID int) {
 	}
 }
 
+// Helper Method for the needed Set N. Makes the Set according to n_t.lock == n.lock && n is not below a mark
 func makeN(n *LockNode, m *LockNode, set *[]*LockNode) {
 	for _, e := range m.children {
 		// if it has the same lock as in n, add it to the set
@@ -101,12 +102,19 @@ func swapMark(set []*LockNode) {
 }
 
 func (t *LockTree) check(n *LockNode, m *LockNode) {
-	// implement this
+	for _, e := range n.children {
+		fmt.Printf("%d\n", e.key) // Just to shut up the Compiler, remove later
+		/*if m.isAbove(e) { // IMPLEMENT isAbove Method
+			t.conflict(e, m) // IMPLEMENT conflict
+		} else {
+			t.check(e, m) // iterate through
+		}*/
+	}
 }
 
-// TODO: FIX METHOD
 func (t *LockTree) analyseThis(node *LockNode, secondTree *LockTree) {
 	var n = make([]*LockNode, 0)
+
 	makeN(node, secondTree.root, &n) // Set which contains all Nodes n in LockTree t, for which is n.lock == secondTree.n.lock && n is not below a mark
 	for _, e := range n {
 		t.check(node, e)
