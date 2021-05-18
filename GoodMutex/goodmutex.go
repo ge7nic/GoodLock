@@ -6,24 +6,28 @@ import (
 
 type GoodMutex struct {
 	l      chan int
-	lockID int
+	LockID int
 }
 
 var id int = 1
+var critchan = make(chan int, 1)
 
 func NewMutex() *GoodMutex {
 	var ch = make(chan int, 1)
-	gm := GoodMutex{ch, id}
+	var gm GoodMutex
+	critchan <- 1
+	gm = GoodMutex{ch, id}
 	id++
+	<-critchan
 	return &gm
 }
 
 func (gm GoodMutex) Lock(tree *tree.LockTree) {
-	tree.Lock(gm.lockID)
+	tree.Lock(gm.LockID)
 	gm.l <- 1
 }
 
 func (gm GoodMutex) Unlock(tree *tree.LockTree) {
-	tree.Unlock(gm.lockID)
+	tree.Unlock(gm.LockID)
 	<-gm.l
 }
